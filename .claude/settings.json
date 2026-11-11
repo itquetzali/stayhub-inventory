@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(gh pr create*)",
+            "command": "jq -c 'select(.tool_input.command | test(\"(^|[;&|[:space:]])gh pr create\")) | {hookSpecificOutput:{hookEventName:\"PostToolUse\",additionalContext:\"A pull request was just created via `gh pr create`. Now launch a subagent (Agent tool, subagent_type \\\"code-reviewer\\\" if it is usable, otherwise \\\"general-purpose\\\") to review the PR: have it run `gh pr diff` for the PR just created (URL is in the command output), review for correctness bugs, security issues, and missing tests, and report findings ranked by severity. Do not push changes or post comments to GitHub unless the user asks; relay the findings to the user.\"}}' 2>/dev/null || true",
+            "statusMessage": "Queuing PR code review..."
+          }
+        ]
+      }
+    ]
+  }
+}
